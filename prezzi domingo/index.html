@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pagina Principale</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    body.dark-mode {
+      background-color: #121212;
+      color: #f0f0f0;
+    }
+
+    .main-header {
+      background-color: #005fa3;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      width: 100%;
+    }
+
+    .main-title {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .theme-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 20px;
+    }
+
+    .product-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .product-card {
+      background-color: white;
+      padding: 15px;
+      width: 200px;
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    body.dark-mode .product-card {
+      background-color: #1e1e1e;
+      color: #ddd;
+    }
+
+    .product-card:hover {
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+      transform: translateY(-4px);
+    }
+
+    .product-img {
+      width: 100%;
+      height: auto;
+      border-radius: 6px;
+    }
+
+    .product-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .product-price {
+      font-size: 14px;
+      color: #333;
+      margin: 8px 0;
+    }
+
+    body.dark-mode .product-price {
+      color: #bbb;
+    }
+
+    .product-description {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .btn-primary {
+      background-color: #005fa3;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 10px;
+    }
+
+    .btn-primary:hover {
+      background-color: #004b8e;
+    }
+
+    .footer {
+      padding: 20px;
+      text-align: center;
+      background-color: #005fa3;
+      color: white;
+      position: relative;
+      bottom: 0;
+      width: 100%;
+    }
+
+    /* Switch stile */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      background-color: #ccc;
+      border-radius: 34px;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      transition: .4s;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      border-radius: 50%;
+      transition: .4s;
+    }
+
+    input:checked + .slider {
+      background-color: #005fa3;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(24px);
+    }
+
+    .slider.round {
+      border-radius: 34px;
+    }
+
+    .slider.round:before {
+      border-radius: 50%;
+    }
+
+    /* Tasto login in basso a destra */
+    .login-btn {
+      position: fixed;
+      bottom: 40px;
+      right: 40px;
+      background-color: #005fa3;
+      color: white;
+      padding: 15px 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 16px;
+      display: inline-block;
+      transition: all 0.3s ease;
+    }
+
+    .login-btn:hover {
+      background-color: #004b8e;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+      transform: translateY(-4px);
+    }
+  </style>
+</head>
+<body>
+  <header class="main-header">
+    <div class="container">
+      <h1 class="main-title">Benvenuto nel Sito</h1>
+    </div>
+
+    <!-- Switch Tema -->
+    <div class="theme-toggle">
+      <label class="switch">
+        <input type="checkbox" id="theme-switch" onchange="toggleTheme()" />
+        <span class="slider round"></span>
+      </label>
+    </div>
+  </header>
+
+  <main class="container">
+    <section>
+      <h2>Lista Prodotti</h2>
+      <div class="product-grid">
+        <!-- Card prodotti verranno aggiunte dinamicamente dal pannello admin -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Tasto per accedere al login -->
+  <a href="login.html" class="login-btn">Accedi al Pannello Admin</a>
+
+  <footer class="footer">
+    &copy; 2025 PACIOCS
+  </footer>
+
+  <script>
+    // Funzione per caricare i prodotti dalla memoria locale
+    function loadProducts() {
+      const products = JSON.parse(localStorage.getItem("products") || "[]");
+      const productGrid = document.querySelector(".product-grid");
+      productGrid.innerHTML = ""; // Pulisce la griglia dei prodotti
+
+      products.forEach(product => {
+        const productCard = document.createElement("div");
+        productCard.classList.add("product-card");
+
+        productCard.innerHTML = `
+          <img class="product-img" src="${product.image}" alt="Immagine prodotto" />
+          <div class="product-title">${product.name}</div>
+          <div class="product-price">${product.price} €</div>
+          <div class="product-description">${product.material}</div>
+          <a href="#" class="btn-primary">Aggiungi al carrello</a>
+        `;
+        productGrid.appendChild(productCard);
+      });
+    }
+
+    // Carica i prodotti quando la pagina è pronta
+    window.addEventListener("DOMContentLoaded", loadProducts);
+
+    // Funzione per aggiungere un prodotto di esempio (simulazione amministrazione)
+    function addProductToLocalStorage() {
+      const newProduct = {
+        name: "Esempio Prodotto",
+        price: "29.99",
+        image: "https://via.placeholder.com/150",
+        material: "Legno"
+      };
+      let products = JSON.parse(localStorage.getItem("products") || "[]");
+      products.push(newProduct);
+      localStorage.setItem("products", JSON.stringify(products));
+      loadProducts(); // Ricarica i prodotti dopo l'aggiunta
+    }
+
+    // Aggiungi prodotto di esempio (usa questa funzione per testare)
+    // addProductToLocalStorage(); // Chiamalo per aggiungere un prodotto al localStorage
+
+    // Funzione per il cambio tema
+    function toggleTheme() {
+      document.body.classList.toggle("dark-mode");
+      document.getElementById("theme-switch").checked = document.body.classList.contains("dark-mode");
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("theme-switch").checked = document.body.classList.contains("dark-mode");
+    });
+  </script>
+</body>
+</html>

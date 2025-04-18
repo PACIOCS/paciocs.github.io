@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body.dark-mode {
+      background-color: #333;
+      color: #f4f4f4;
+    }
+
+    .login-container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 300px;
+    }
+
+    body.dark-mode .login-container {
+      background-color: #444;
+    }
+
+    .login-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    body.dark-mode .input-field {
+      background-color: #555;
+      color: white;
+      border-color: #666;
+    }
+
+    .btn-primary {
+      width: 100%;
+      background-color: #005fa3;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover {
+      background-color: #004b8e;
+    }
+
+    .error-message {
+      color: red;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .mode-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      background-color: #ccc;
+      border-radius: 34px;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      transition: .4s;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      border-radius: 50%;
+      transition: .4s;
+    }
+
+    input:checked + .slider {
+      background-color: #005fa3;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(24px);
+    }
+
+    .slider.round {
+      border-radius: 34px;
+    }
+
+    .slider.round:before {
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+  <!-- Switch per il cambio modalità senza scritta -->
+  <div class="mode-toggle">
+    <label class="switch">
+      <input type="checkbox" id="modeSwitch">
+      <span class="slider round"></span>
+    </label>
+  </div>
+
+  <div class="login-container">
+    <h2>Accedi al Pannello</h2>
+    <form id="loginForm">
+      <input type="text" id="username" class="input-field" placeholder="Nome utente" required>
+      <input type="password" id="password" class="input-field" placeholder="Password" required>
+      <button type="submit" class="btn-primary">Accedi</button>
+    </form>
+    <p class="error-message" id="errorMessage" style="display:none;">Credenziali errate. Riprova.</p>
+  </div>
+
+  <script>
+    // Check saved mode preference
+    if (localStorage.getItem("mode") === "dark") {
+      document.body.classList.add("dark-mode");
+      document.getElementById("modeSwitch").checked = true;
+    }
+
+    // Toggle dark/light mode when switch is toggled
+    document.getElementById("modeSwitch").addEventListener("change", function() {
+      const isDarkMode = this.checked;
+      document.body.classList.toggle("dark-mode", isDarkMode);
+
+      // Save mode preference in localStorage
+      localStorage.setItem("mode", isDarkMode ? "dark" : "light");
+    });
+
+    // Login form submission
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      if (username === "PACIOCS" && password === "Gioluda.123") {
+        localStorage.setItem("isAuthenticated", "true");
+        window.location.href = "admin.html";
+      } else {
+        document.getElementById("errorMessage").style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>

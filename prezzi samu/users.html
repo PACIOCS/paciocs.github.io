@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestione Utenti</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0; padding: 0; color: #333;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.dark {
+      background-color: #333; color: #f0f2f5;
+    }
+    header {
+      background-color: #0077cc;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .container {
+      max-width: 800px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    body.dark .container { background: #444; color: #f0f2f5; }
+    .theme-toggle { text-align:center; margin-bottom:1rem; }
+    form label { display:block; margin:0.5rem 0 0.2rem; }
+    form input, form select {
+      width:100%; padding:0.6rem; border-radius:5px; border:1px solid #ccc;
+      margin-bottom:1rem;
+    }
+    form input[type=checkbox] { width:auto; margin-right:0.5rem; }
+    button {
+      padding:0.8rem 1.2rem; background:#0077cc; color:white; border:none;
+      border-radius:5px; cursor:pointer; transition:background 0.3s;
+    }
+    button:hover { background:#005fa3; }
+    .item { padding:0.5rem 0; border-bottom:1px solid #ddd; }
+    body.dark .item { border-color:#555; }
+  </style>
+</head>
+<body>
+  <header><h1>Gestione Utenti</h1></header>
+  <div class="theme-toggle">
+    <label><input type="checkbox" id="theme-toggle"> Tema scuro</label>
+  </div>
+  <div class="container">
+    <form id="user-form">
+      <label for="first-name">Nome</label>
+      <input type="text" id="first-name" required>
+      <label for="last-name">Cognome</label>
+      <input type="text" id="last-name" required>
+      <label for="username">Username</label>
+      <input type="text" id="username" required>
+      <label for="role">Ruolo</label>
+      <select id="role">
+        <option value="admin">Admin</option>
+        <option value="editor">Editor</option>
+        <option value="viewer">Viewer</option>
+      </select>
+      <h3>Permessi</h3>
+      <label><input type="checkbox" id="perm-site"> Modifica Sito</label>
+      <label><input type="checkbox" id="perm-prices"> Gestisci Prezzi</label>
+      <label><input type="checkbox" id="perm-users"> Gestisci Utenti</label>
+      <button type="submit">Crea Utente</button>
+    </form>
+    <h2>Utenti</h2>
+    <div id="users-list"></div>
+  </div>
+  <footer style="text-align:center; padding:1rem;"><button onclick="location.href='admin.html'">Torna Admin</button></footer>
+  <script>
+    // theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    if(localStorage.getItem('theme')==='dark') document.body.classList.add('dark'), themeToggle.checked=true;
+    themeToggle.addEventListener('change', ()=>{
+      document.body.classList.toggle('dark');
+      localStorage.setItem('theme', themeToggle.checked?'dark':'light');
+    });
+    // users storage
+    let users = JSON.parse(localStorage.getItem('users')||'[]');
+    const list = document.getElementById('users-list');
+    function renderUsers(){ list.innerHTML = ''; users.forEach(u=>{
+      const d=document.createElement('div'); d.className='item';
+      d.textContent=`${u.first} ${u.last} (${u.username}) - ${u.role}`;
+      list.appendChild(d);
+    }); }
+    renderUsers();
+    document.getElementById('user-form').addEventListener('submit', e=>{
+      e.preventDefault();
+      const u={ first:document.getElementById('first-name').value,
+                last:document.getElementById('last-name').value,
+                username:document.getElementById('username').value,
+                role:document.getElementById('role').value,
+                perms:[] };
+      ['perm-site','perm-prices','perm-users'].forEach(id=>{
+        if(document.getElementById(id).checked) u.perms.push(id);
+      });
+      users.push(u);
+      localStorage.setItem('users',JSON.stringify(users));
+      renderUsers();
+      e.target.reset();
+    });
+  </script>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pannello Admin</title>
+  <style>
+    :root {
+      --primary-color: #005fa3;
+      --background-light: #f9f9f9;
+      --background-dark: #2c2c2c;
+      --text-light: #333;
+      --text-dark: #f9f9f9;
+      --card-bg-light: #ffffff;
+      --card-bg-dark: #444;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: var(--background-light);
+      color: var(--text-light);
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body.dark-mode {
+      background-color: var(--background-dark);
+      color: var(--text-dark);
+    }
+
+    header {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: var(--card-bg-light);
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    body.dark-mode .container {
+      background-color: var(--card-bg-dark);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .btn {
+      padding: 10px 15px;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background: #004b8e;
+    }
+
+    ul#productList {
+      list-style: none;
+      padding: 0;
+      margin-top: 20px;
+    }
+
+    ul#productList li {
+      background: #eee;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    body.dark-mode ul#productList li {
+      background: #555;
+      color: white;
+    }
+
+    ul#productList img {
+      max-height: 60px;
+      border-radius: 4px;
+    }
+
+    .section-title {
+      margin-top: 40px;
+      border-top: 1px solid #ccc;
+      padding-top: 20px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .delete-btn {
+      background: crimson;
+      padding: 5px 10px;
+      border-radius: 4px;
+    }
+
+    .delete-btn:hover {
+      background: darkred;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Pannello di Amministrazione</h1>
+  </header>
+
+  <div class="container">
+    <h2>Aggiungi Prodotto</h2>
+    <form id="productForm">
+      <div class="form-group">
+        <label for="productName">Nome prodotto:</label>
+        <input type="text" id="productName" required />
+      </div>
+      <div class="form-group">
+        <label for="productPrice">Prezzo:</label>
+        <input type="number" id="productPrice" min="0" required />
+      </div>
+      <div class="form-group">
+        <label for="productMaterial">Materiale:</label>
+        <select id="productMaterial" required>
+          <option>Diamante</option>
+          <option>Smeraldo</option>
+          <option>Oro</option>
+          <option>Ferro</option>
+          <option>Rame</option>
+          <option>Carbone</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="productImage">URL Immagine:</label>
+        <input type="text" id="productImage" required />
+      </div>
+      <button type="submit" class="btn">Aggiungi</button>
+    </form>
+
+    <ul id="productList"></ul>
+
+    <section class="section-title">
+      <h2>Gestione</h2>
+      <div class="button-group">
+        <button class="btn" onclick="location.href='users.html'">Gestisci Utenti</button>
+        <button class="btn" onclick="location.href='roles.html'">Gestisci Ruoli</button>
+        <button class="btn" onclick="location.href='index.html'">Torna Alla Home</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // DARK MODE
+    const body = document.body;
+
+    if (localStorage.getItem("theme") === "dark") {
+      body.classList.add("dark-mode");
+    }
+
+    // PRODOTTI
+    const form = document.getElementById("productForm");
+    const productList = document.getElementById("productList");
+
+    function renderProducts() {
+      const products = JSON.parse(localStorage.getItem("products") || "[]");
+      productList.innerHTML = "";
+
+      products.forEach((product, index) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <div>
+            <strong>${product.name}</strong><br>
+            Prezzo: ${product.price} (${product.material})<br>
+            <img src="${product.image}" alt="img"/>
+          </div>
+          <button class="delete-btn" onclick="deleteProduct(${index})">Elimina</button>
+        `;
+        productList.appendChild(li);
+      });
+    }
+
+    function deleteProduct(index) {
+      const products = JSON.parse(localStorage.getItem("products") || "[]");
+      products.splice(index, 1);
+      localStorage.setItem("products", JSON.stringify(products));
+      renderProducts();
+    }
+
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+
+      const product = {
+        name: document.getElementById("productName").value.trim(),
+        price: parseFloat(document.getElementById("productPrice").value),
+        material: document.getElementById("productMaterial").value,
+        image: document.getElementById("productImage").value.trim()
+      };
+
+      if (product.price < 0 || !product.name || !product.image) {
+        alert("Dati non validi.");
+        return;
+      }
+
+      const products = JSON.parse(localStorage.getItem("products") || "[]");
+      products.push(product);
+      localStorage.setItem("products", JSON.stringify(products));
+      form.reset();
+      renderProducts();
+    });
+
+    document.addEventListener("DOMContentLoaded", renderProducts);
+  </script>
+
+</body>
+</html>
